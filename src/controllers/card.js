@@ -20,6 +20,38 @@ class CardController {
       next(error)
     }
   }
+
+  static async getCards(req, res, next) {
+    try {
+      const { q = '', _limit = 18, _page = 1 } = req.query
+      const offset = (_page - 1) * _limit
+      let cards = await Card.find({
+        $or: [
+          { card_name: new RegExp(q, 'ig') },
+          { description: new RegExp(q, 'ig') },
+          { evo_description: new RegExp(q, 'ig') },
+          { skill_disc: new RegExp(q, 'ig') },
+          { evo_skill_disc: new RegExp(q, 'ig') },
+        ],
+      })
+        .limit(Number(_limit))
+        .skip(offset)
+      res.status(200).json(cards)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async getOneCard(req, res, next) {
+    try {
+      const id = req.params.id
+      const card = await Card.findOne({ card_id: id })
+      if (!card) return next({ status: 404, message: 'Card Not Found' })
+      res.status(200).json(card)
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 export default CardController

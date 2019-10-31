@@ -9,4 +9,8 @@ Router.get((req, res, next) =>
 
 Router.use('/cards', cards)
 
+Router.use('/*', (req, res) =>
+  res.status(404).json({ message: 'API Route Not Found' })
+)
+
 export default Router
