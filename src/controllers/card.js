@@ -25,7 +25,7 @@ class CardController {
     try {
       const { q = '', _limit = 18, _page = 1 } = req.query
       const offset = (_page - 1) * _limit
-      let cards = await Card.find({
+      let search = {
         $or: [
           { card_name: new RegExp(q, 'ig') },
           { description: new RegExp(q, 'ig') },
@@ -33,18 +33,11 @@ class CardController {
           { skill_disc: new RegExp(q, 'ig') },
           { evo_skill_disc: new RegExp(q, 'ig') },
         ],
-      })
+      }
+      let cards = await Card.find(search)
         .limit(Number(_limit))
         .skip(offset)
-      let count = await Card.count({
-        $or: [
-          { card_name: new RegExp(q, 'ig') },
-          { description: new RegExp(q, 'ig') },
-          { evo_description: new RegExp(q, 'ig') },
-          { skill_disc: new RegExp(q, 'ig') },
-          { evo_skill_disc: new RegExp(q, 'ig') },
-        ],
-      })
+      let count = await Card.count(search)
       res.set('x-total-count', count)
       res.status(200).json(cards)
     } catch (error) {
