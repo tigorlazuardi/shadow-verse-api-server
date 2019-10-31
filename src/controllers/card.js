@@ -36,6 +36,16 @@ class CardController {
       })
         .limit(Number(_limit))
         .skip(offset)
+      let count = await Card.count({
+        $or: [
+          { card_name: new RegExp(q, 'ig') },
+          { description: new RegExp(q, 'ig') },
+          { evo_description: new RegExp(q, 'ig') },
+          { skill_disc: new RegExp(q, 'ig') },
+          { evo_skill_disc: new RegExp(q, 'ig') },
+        ],
+      })
+      res.set('x-total-count', count)
       res.status(200).json(cards)
     } catch (error) {
       next(error)
