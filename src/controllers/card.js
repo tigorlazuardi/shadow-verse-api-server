@@ -39,7 +39,7 @@ class CardController {
         .skip(offset)
       let count = await Card.count(search)
       console.log(count)
-      res.set('x-total-count', count)
+      res.set({ 'x-total-count': count })
       res.status(200).json(cards)
     } catch (error) {
       next(error)
